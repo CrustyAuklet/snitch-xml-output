@@ -20,15 +20,16 @@ CPMAddPackage(NAME snitch
               SYSTEM ON
 )
 
-set(TEST_FILES
-    test.cpp
-)
+macro(add_test test_name)
+    add_executable(${test_name}_snitch ${ARGN})
+    target_link_libraries(${test_name}_snitch PRIVATE snitch::snitch)
+    target_include_directories(${test_name}_snitch PUBLIC ${CMAKE_SOURCE_DIR})
 
-add_executable(test_snitch ${TEST_FILES})
-target_link_libraries(test_snitch PRIVATE snitch::snitch)
-target_include_directories(test_snitch PUBLIC ${CMAKE_SOURCE_DIR})
+    add_executable(${test_name}_catch2 ${ARGN})
+    target_link_libraries(${test_name}_catch2 PRIVATE Catch2::Catch2WithMain)
+    target_compile_definitions(${test_name}_catch2 PUBLIC TESTING_USE_CATCH2)
+    target_include_directories(${test_name}_catch2 PUBLIC ${CMAKE_SOURCE_DIR})
+endmacro()
 
-add_executable(test_catch2 ${TEST_FILES})
-target_link_libraries(test_catch2 PRIVATE Catch2::Catch2WithMain)
-target_compile_definitions(test_catch2 PUBLIC TESTING_USE_CATCH2)
-target_include_directories(test_catch2 PUBLIC ${CMAKE_SOURCE_DIR})
+add_test(first test.cpp)
+add_test(all_pass all_pass.cpp)
