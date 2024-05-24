@@ -1,0 +1,55 @@
+name: cmake
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  CMAKE_INSTALL_VERSION: 3.14.7
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+    name: Ubuntu GCC Debug
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
+      - name: Setup GCC
+        run: |
+          sudo apt install g++-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
+          sudo update-alternatives --set gcc /usr/bin/gcc-11
+
+      - name: Create Build Environment
+        run: cmake -E make_directory ${{github.workspace}}/build
+
+      - name: Configure CMake
+        shell: bash
+        working-directory: ${{github.workspace}}/build
+        run: cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++
+
+      - name: Build
+        shell: bash
+        working-directory: ${{github.workspace}}/build
+        run: cmake --build . --config Debug --parallel 2
+
+      - name: Install python deps
+        shell: bash
+        working-directory: ${{github.workspace}}
+        run: pip3 install -r ./requirements.txt
+
+      - name: Test
+        shell: bash
+        working-directory: ${{github.workspace}}/build
+        run: |
+          python ../approval.py all_pass ./ ../data
+          python ../approval.py all_fail ./ ../data

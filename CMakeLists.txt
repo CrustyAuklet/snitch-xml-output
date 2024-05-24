@@ -21,15 +21,15 @@ CPMAddPackage(NAME snitch
 )
 
 macro(add_test test_name)
-    add_executable(${test_name}_snitch ${ARGN})
+    add_executable(${test_name}_snitch ${test_name}.cpp)
     target_link_libraries(${test_name}_snitch PRIVATE snitch::snitch)
     target_include_directories(${test_name}_snitch PUBLIC ${CMAKE_SOURCE_DIR})
 
-    add_executable(${test_name}_catch2 ${ARGN})
+    add_executable(${test_name}_catch2 ${test_name}.cpp)
     target_link_libraries(${test_name}_catch2 PRIVATE Catch2::Catch2WithMain)
     target_compile_definitions(${test_name}_catch2 PUBLIC TESTING_USE_CATCH2)
     target_include_directories(${test_name}_catch2 PUBLIC ${CMAKE_SOURCE_DIR})
 endmacro()
 
-add_test(first test.cpp)
-add_test(all_pass all_pass.cpp)
+add_test(all_pass)
+add_test(all_fail)
