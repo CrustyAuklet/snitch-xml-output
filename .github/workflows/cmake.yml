@@ -53,3 +53,4 @@ jobs:
         run: |
           python ../approval.py all_pass ./ ../data
           python ../approval.py all_fail ./ ../data
+          python ../approval.py exceptions ./ ../data

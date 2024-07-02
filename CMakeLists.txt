@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.28)
 project(test_output)
 
+set(CPM_snitch_SOURCE "E:/wildlife/nextgen/snitch")
+set(CPM_USE_NAMED_CACHE_DIRECTORIES ON)
 include(cmake/CPM.cmake)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -33,3 +35,4 @@ endmacro()
 
 add_test(all_pass)
 add_test(all_fail)
+add_test(exceptions)
